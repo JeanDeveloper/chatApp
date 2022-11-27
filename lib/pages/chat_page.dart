@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chat/widgets/chat_message.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,10 +12,23 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   
   final _textController = TextEditingController();
   final _focusNode      = FocusNode();
+  bool _isWritting     = false;
+
+  List<ChatMessage> _messages = [
+    // ChatMessage(texto: 'Hola Mundo', uid: '123'),
+    // ChatMessage(texto: 'Hola Mundo', uid: '123'),
+    // ChatMessage(texto: 'Hola Mundo', uid: '123'),
+    // ChatMessage(texto: 'Hola Mundo', uid: '123123123'),
+    // ChatMessage(texto: 'Hola Mundo', uid: '123422'),
+    // ChatMessage(texto: 'Hola Mundo', uid: '123'),
+    // ChatMessage(texto: 'Hola Mundo', uid: '12324242'),
+    // ChatMessage(texto: 'Hola Mundo', uid: '123'),
+
+  ];
 
 
   @override
@@ -30,7 +44,7 @@ class _ChatPageState extends State<ChatPage> {
             CircleAvatar(
               backgroundColor: Colors.blue[100],
               maxRadius: 14,
-              child: const Text('Te', style: TextStyle(fontSize: 12)),
+              child: const Text('MF', style: TextStyle(fontSize: 12)),
             ),
             const SizedBox( height: 3),
             const Text('Meliisa Flores', style: TextStyle(color: Colors.black87, fontSize: 10)),
@@ -43,8 +57,9 @@ class _ChatPageState extends State<ChatPage> {
 
           Flexible(
             child: ListView.builder(
+              itemCount: _messages.length,
               physics: const BouncingScrollPhysics(),
-              itemBuilder: ( _ , i) => Text('$i'),
+              itemBuilder: ( _ , i) => _messages[i],
               reverse: true,
             )
           ),
@@ -77,6 +92,15 @@ class _ChatPageState extends State<ChatPage> {
                 onSubmitted: _handleSubmit,
                 onChanged: ( String texto ){
                   // TODO: CUANDO HAY UN VALOR, PARA PODER POSTEAR
+
+                  setState(() {
+                    if( texto.trim().isNotEmpty ){
+                      _isWritting = true;
+                    }else{
+                      _isWritting = false;
+                    }
+                  });
+
                 },
                 decoration: const InputDecoration.collapsed(
                   hintText: 'Enviar Mensaje',
@@ -98,11 +122,20 @@ class _ChatPageState extends State<ChatPage> {
                   )
                   : Container(
                     margin: const EdgeInsets.symmetric(horizontal: 4),
-                    child: IconButton(
-                      onPressed: (){
-                        print(_textController.text);
-                      }, 
-                      icon: Icon( Icons.send, color: Colors.blue[400] )
+                    child: IconTheme(
+                      data: IconThemeData(color: Colors.blue[400]),
+                      child: IconButton(
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onPressed: _isWritting
+                          ? () => _handleSubmit( _textController.text.trim() )
+                          : null,
+                        // onPressed: (){
+                        //   print(_textController.text);
+                        // }, 
+                        icon: const Icon( Icons.send )
+                    
+                      ),
                     ),
                   )
             )
@@ -117,9 +150,24 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   _handleSubmit(String texto){
+
+    if( texto.isEmpty ) return ; 
+
     print(texto);
     _textController.clear();
     _focusNode.requestFocus();
+
+    final _newMessage = ChatMessage(
+      texto: texto, 
+      uid: '123',
+      animationController: AnimationController(vsync: this, duration: Duration(milliseconds: 400)),
+    );
+    _messages.insert(0, _newMessage);
+    _newMessage.animationController.forward();
+
+    setState(() {
+      _isWritting = false;
+    });
   }
 
 }

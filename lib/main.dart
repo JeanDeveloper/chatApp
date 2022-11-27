@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: 'chat',
       routes: appRoutes,
-    
     );
   }
 }
