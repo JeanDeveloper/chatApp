@@ -20,19 +20,19 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const ImageLogin(titulo: 'Messenger',),
-          
+
                 FormLogin(),
-          
+
                 const Label(
                   ruta: 'register',
                   titulo: '¿No tienes cuenta?',
                   subtitulo: 'Crea una ahora',
                 ),
-          
+
                 const Text('Términos y condiciones de uso', style: TextStyle(fontWeight: FontWeight.w200))
-          
+
               ],
-          
+
               ),
           ),
         ),
